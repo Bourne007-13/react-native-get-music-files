@@ -34,7 +34,7 @@ class TurboSongsModule internal constructor(context: ReactApplicationContext) :
   }
 
   @ReactMethod
-  override fun getAll(options: ReadableMap?, promise: Promise?) {
+  override fun getAll(options: ReadableMap, promise: Promise) {
     if(!hasPermissions()){
       if (promise != null) {
         promise.reject("Permissions denied","Permissions denied")
@@ -145,7 +145,7 @@ class TurboSongsModule internal constructor(context: ReactApplicationContext) :
   }
 
   @ReactMethod
-  override fun getAlbums(options: ReadableMap?, promise: Promise?) {
+  override fun getAlbums(options: ReadableMap, promise: Promise) {
 
     if(!hasPermissions()){
       if (promise != null) {
@@ -263,7 +263,7 @@ class TurboSongsModule internal constructor(context: ReactApplicationContext) :
   }
 
   @ReactMethod
-  override fun searchSongs(options: ReadableMap?, promise: Promise?) {
+  override fun search(options: ReadableMap, promise: Promise) {
 
     if(!hasPermissions()){
       if (promise != null) {
