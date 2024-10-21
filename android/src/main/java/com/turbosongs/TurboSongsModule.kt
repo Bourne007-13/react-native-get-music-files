@@ -33,22 +33,12 @@ class TurboSongsModule internal constructor(context: ReactApplicationContext) :
     return NAME
   }
 
-  private fun hasPermissions(): Boolean {
-    val readPermission = ContextCompat.checkSelfPermission(reactApplicationContext.applicationContext, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-    val audioPermission = ContextCompat.checkSelfPermission(reactApplicationContext.applicationContext, android.Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED
-
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-      return audioPermission
-    }
-    return readPermission
-  }
-
-  // Example method
-  // See https://reactnative.dev/docs/native-modules-android
   @ReactMethod
-  override fun getAll(options: ReadableMap, promise: Promise) {
+  override fun getAll(options: ReadableMap?, promise: Promise?) {
     if(!hasPermissions()){
-      promise.reject("Permissions denied","Permissions denied")
+      if (promise != null) {
+        promise.reject("Permissions denied","Permissions denied")
+      }
       return
     }
 
@@ -61,28 +51,28 @@ class TurboSongsModule internal constructor(context: ReactApplicationContext) :
       MediaStore.Audio.Media.DATA
     )
 
-    val limit =  when (options.hasKey("limit")) {
-      true -> options.getInt("limit")
+    val limit =  when (options?.hasKey("limit")) {
+      true -> options?.getInt("limit")
       else -> 20
     }
 
-    val offset =  when (options.hasKey("offset")) {
-      true -> options.getInt("offset")
+    val offset =  when (options?.hasKey("offset")) {
+      true -> options?.getInt("offset")
       else -> 0
     }
 
-    val minSongDuration =  when (options.hasKey("minSongDuration")) {
+    val minSongDuration =  when (options?.hasKey("minSongDuration")) {
       true -> options.getInt("minSongDuration")
       else -> 1000
     }
 
     val sortOrder = when  {
-      options.hasKey("sortOrder") -> options.getString("sortOrder")
+      options?.hasKey("sortOrder") == true -> options?.getString("sortOrder")
       else -> "ASC"
     }
 
     val sortColumn = when {
-      options.hasKey("sortBy") -> options.getString("sortBy")
+      options?.hasKey("sortBy") == true -> options?.getString("sortBy")
       else -> "TITLE"
     }
 
@@ -149,20 +139,28 @@ class TurboSongsModule internal constructor(context: ReactApplicationContext) :
       writableArray.pushMap(writableMap)
     }
 
-    promise.resolve(writableArray)
+    if (promise != null) {
+      promise.resolve(writableArray)
+    }
   }
 
   @ReactMethod
-  override fun getAlbums(options: ReadableMap, promise : Promise) {
+  override fun getAlbums(options: ReadableMap?, promise: Promise?) {
 
     if(!hasPermissions()){
-      promise.reject("Permissions denied","Permissions denied")
+      if (promise != null) {
+        promise.reject("Permissions denied","Permissions denied")
+      }
       return
     }
 
-    if(!options.hasKey("artist")){
-      promise.reject("Artist name must not be empty", "Artist name must not be empty")
-      return
+    if (options != null) {
+      if(!options.hasKey("artist")){
+        if (promise != null) {
+          promise.reject("Artist name must not be empty", "Artist name must not be empty")
+        }
+        return
+      }
     }
 
     var projection = arrayOf<String>(
@@ -175,23 +173,23 @@ class TurboSongsModule internal constructor(context: ReactApplicationContext) :
 
     val artist = options?.getString("artist")
 
-    val limit =  when (options.hasKey("limit")) {
+    val limit =  when (options?.hasKey("limit")) {
       true -> options.getInt("limit")
       else -> 20
     }
 
-    val offset =  when (options.hasKey("offset")) {
+    val offset =  when (options?.hasKey("offset")) {
       true -> options.getInt("offset")
       else -> 0
     }
 
     val sortOrder = when  {
-      options.hasKey("sortOrder") -> options.getString("sortOrder")
+      options?.hasKey("sortOrder") == true -> options?.getString("sortOrder")
       else -> "ASC"
     }
 
     val sortColumn = when {
-      options.hasKey("sortBy") -> options.getString("sortBy")
+      options?.hasKey("sortBy") == true -> options?.getString("sortBy")
       else -> "TITLE"
     }
 
@@ -259,20 +257,28 @@ class TurboSongsModule internal constructor(context: ReactApplicationContext) :
       writableArray.pushMap(writableMap)
     }
 
-    promise.resolve(writableArray)
+    if (promise != null) {
+      promise.resolve(writableArray)
+    }
   }
 
   @ReactMethod
-  override fun search(options: ReadableMap, promise : Promise) {
+  override fun searchSongs(options: ReadableMap?, promise: Promise?) {
 
     if(!hasPermissions()){
-      promise.reject("Permissions denied","Permissions denied")
+      if (promise != null) {
+        promise.reject("Permissions denied","Permissions denied")
+      }
       return
     }
 
-    if(!options.hasKey("searchBy")){
-      promise.reject("Search param must not be empty", "Search param must not be empty")
-      return
+    if (options != null) {
+      if(!options.hasKey("searchBy")){
+        if (promise != null) {
+          promise.reject("Search param must not be empty", "Search param must not be empty")
+        }
+        return
+      }
     }
 
     var projection = arrayOf<String>(
@@ -284,25 +290,25 @@ class TurboSongsModule internal constructor(context: ReactApplicationContext) :
       MediaStore.Audio.Media.DATA
     )
 
-    val searchBy = options.getString("searchBy")
+    val searchBy = options?.getString("searchBy")
 
-    val limit =  when (options.hasKey("limit")) {
+    val limit =  when (options?.hasKey("limit")) {
       true -> options.getInt("limit")
       else -> 20
     }
 
-    val offset =  when (options.hasKey("offset")) {
+    val offset =  when (options?.hasKey("offset")) {
       true -> options.getInt("offset")
       else -> 0
     }
 
     val sortOrder = when  {
-      options.hasKey("sortOrder") -> options.getString("sortOrder")
+      options?.hasKey("sortOrder") == true -> options.getString("sortOrder")
       else -> "ASC"
     }
 
     val sortColumn = when {
-      options.hasKey("sortBy") -> options.getString("sortBy")
+      options?.hasKey("sortBy") == true -> options.getString("sortBy")
       else -> "TITLE"
     }
 
@@ -373,8 +379,353 @@ class TurboSongsModule internal constructor(context: ReactApplicationContext) :
       writableArray.pushMap(writableMap)
     }
 
-    promise.resolve(writableArray)
+    if (promise != null) {
+      promise.resolve(writableArray)
+    }
   }
+
+  private fun hasPermissions(): Boolean {
+    val readPermission = ContextCompat.checkSelfPermission(reactApplicationContext.applicationContext, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    val audioPermission = ContextCompat.checkSelfPermission(reactApplicationContext.applicationContext, android.Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED
+
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+      return audioPermission
+    }
+    return readPermission
+  }
+
+  // Example method
+  // See https://reactnative.dev/docs/native-modules-android
+//  @ReactMethod
+//  override fun getAll(options: ReadableMap, promise: Promise) {
+//    if(!hasPermissions()){
+//      promise.reject("Permissions denied","Permissions denied")
+//      return
+//    }
+//
+//    val projection = arrayOf<String>(
+//      MediaStore.Audio.AudioColumns.TITLE,
+//      MediaStore.Audio.AudioColumns.ALBUM,
+//      MediaStore.Audio.AudioColumns.ARTIST,
+//      MediaStore.Audio.AudioColumns.DURATION,
+//      MediaStore.Audio.AudioColumns.GENRE,
+//      MediaStore.Audio.Media.DATA
+//    )
+//
+//    val limit =  when (options.hasKey("limit")) {
+//      true -> options.getInt("limit")
+//      else -> 20
+//    }
+//
+//    val offset =  when (options.hasKey("offset")) {
+//      true -> options.getInt("offset")
+//      else -> 0
+//    }
+//
+//    val minSongDuration =  when (options.hasKey("minSongDuration")) {
+//      true -> options.getInt("minSongDuration")
+//      else -> 1000
+//    }
+//
+//    val sortOrder = when  {
+//      options.hasKey("sortOrder") -> options.getString("sortOrder")
+//      else -> "ASC"
+//    }
+//
+//    val sortColumn = when {
+//      options.hasKey("sortBy") -> options.getString("sortBy")
+//      else -> "TITLE"
+//    }
+//
+//    // Bellow android 0
+//    val selection = MediaStore.Audio.Media.IS_MUSIC + " != 0" + " AND " + MediaStore.Audio.Media.DURATION + " >= " + minSongDuration
+//    // Android 0 afterwards
+//    val bundleSelection = bundleOf(
+//      ContentResolver.QUERY_ARG_SQL_SELECTION bundleTo selection,
+//      ContentResolver.QUERY_ARG_LIMIT bundleTo limit,
+//      ContentResolver.QUERY_ARG_OFFSET bundleTo offset,
+//    )
+//
+//    // ORDER BY $orderBy
+//    val resultSet = parseCursor(projection,
+//      "$selection LIMIT $limit OFFSET $offset", bundleSelection, null
+//    )
+//
+//    val songList: ArrayList<Any> = createSongCursor(resultSet, options).toArrayList()
+//
+//    // manual sort
+//    songList.sortWith(compareBy {
+//      when (sortColumn) {
+//        "DURATION" -> "duration"
+//        "TITLE" -> "title"
+//        "ARTIST" -> "artist"
+//        "ALBUM" -> "album"
+//        "GENRE" -> "genre"
+//        "DATE_ADDED" -> "date_added"
+//        // Add more cases for other columns if needed
+//        else -> "title"
+//      }
+//    })
+//
+//    // If the sortOrder is descending, reverse the sorted list
+//    if (sortOrder == "DESC") {
+//      songList.reverse()
+//    }
+//
+//    // Convert ArrayList to WritableArray
+//    val writableArray: WritableArray = Arguments.createArray()
+//
+//    for (item in songList) {
+//      val writableMap: WritableMap = Arguments.createMap()
+//
+//      when (item) {
+//        is Map<*, *> -> {
+//          // If the item is a Map, assume it's a HashMap<String, Any>
+//          for ((key, value) in item.entries) {
+//            when (value) {
+//              is String -> writableMap.putString(key.toString(), value)
+//              is Int -> writableMap.putInt(key.toString(), value)
+//              is Double -> writableMap.putDouble(key.toString(), value)
+//              is Boolean -> writableMap.putBoolean(key.toString(), value)
+//              // Handle other types as needed
+//            }
+//          }
+//        }
+//        // Add more cases if there are other types in your ArrayList
+//        else -> {
+//          // Handle other types or provide a default behavior
+//        }
+//      }
+//
+//      writableArray.pushMap(writableMap)
+//    }
+//
+//    promise.resolve(writableArray)
+//  }
+
+//  @ReactMethod
+//  override fun getAlbums(options: ReadableMap, promise : Promise) {
+//
+//    if(!hasPermissions()){
+//      promise.reject("Permissions denied","Permissions denied")
+//      return
+//    }
+//
+//    if(!options.hasKey("artist")){
+//      promise.reject("Artist name must not be empty", "Artist name must not be empty")
+//      return
+//    }
+//
+//    var projection = arrayOf<String>(
+//      MediaStore.Audio.Albums.ALBUM_ID,
+//      MediaStore.Audio.Albums.ALBUM,
+//      MediaStore.Audio.Albums.ARTIST,
+//      MediaStore.Audio.AudioColumns.NUM_TRACKS,
+//      MediaStore.Audio.Media.DATA
+//    )
+//
+//    val artist = options?.getString("artist")
+//
+//    val limit =  when (options.hasKey("limit")) {
+//      true -> options.getInt("limit")
+//      else -> 20
+//    }
+//
+//    val offset =  when (options.hasKey("offset")) {
+//      true -> options.getInt("offset")
+//      else -> 0
+//    }
+//
+//    val sortOrder = when  {
+//      options.hasKey("sortOrder") -> options.getString("sortOrder")
+//      else -> "ASC"
+//    }
+//
+//    val sortColumn = when {
+//      options.hasKey("sortBy") -> options.getString("sortBy")
+//      else -> "TITLE"
+//    }
+//
+//    // Bellow android 0
+//    val selection = MediaStore.Audio.Media.IS_MUSIC + " != 0" + " AND " + MediaStore.Audio.Albums.ARTIST + " LIKE ?"
+//    val whereArgs = arrayOf("%$artist%")
+//    // Android 0 afterwards
+//    val bundleSelection = bundleOf(
+//      ContentResolver.QUERY_ARG_SQL_SELECTION bundleTo selection,
+//      ContentResolver.QUERY_ARG_SQL_SELECTION_ARGS bundleTo whereArgs,
+//      ContentResolver.QUERY_ARG_LIMIT bundleTo limit,
+//      ContentResolver.QUERY_ARG_OFFSET bundleTo offset,
+//    )
+//
+//    val resultSet = parseCursor(projection,
+//      "$selection LIMIT $limit OFFSET $offset", bundleSelection, whereArgs
+//    )
+//
+//    val songList: ArrayList<Any> = createAlbumCursor(resultSet, options).toArrayList()
+//
+//    // manual sort
+//    songList.sortWith(compareBy {
+//      when (sortColumn) {
+//        "DURATION" -> "duration"
+//        "TITLE" -> "title"
+//        "ARTIST" -> "artist"
+//        "ALBUM" -> "album"
+//        "GENRE" -> "genre"
+//        "DATE_ADDED" -> "date_added"
+//        // Add more cases for other columns if needed
+//        else -> "title"
+//      }
+//    })
+//
+//    // If the sortOrder is descending, reverse the sorted list
+//    if (sortOrder == "DESC") {
+//      songList.reverse()
+//    }
+//
+//    // Convert ArrayList to WritableArray
+//    val writableArray: WritableArray = Arguments.createArray()
+//
+//    for (item in songList) {
+//      val writableMap: WritableMap = Arguments.createMap()
+//
+//      when (item) {
+//        is Map<*, *> -> {
+//          // If the item is a Map, assume it's a HashMap<String, Any>
+//          for ((key, value) in item.entries) {
+//            when (value) {
+//              is String -> writableMap.putString(key.toString(), value)
+//              is Int -> writableMap.putInt(key.toString(), value)
+//              is Double -> writableMap.putDouble(key.toString(), value)
+//              is Boolean -> writableMap.putBoolean(key.toString(), value)
+//              // Handle other types as needed
+//            }
+//          }
+//        }
+//        // Add more cases if there are other types in your ArrayList
+//        else -> {
+//          // Handle other types or provide a default behavior
+//        }
+//      }
+//
+//      writableArray.pushMap(writableMap)
+//    }
+//
+//    promise.resolve(writableArray)
+//  }
+
+//  @ReactMethod
+//  override fun search(options: ReadableMap, promise : Promise) {
+//
+//    if(!hasPermissions()){
+//      promise.reject("Permissions denied","Permissions denied")
+//      return
+//    }
+//
+//    if(!options.hasKey("searchBy")){
+//      promise.reject("Search param must not be empty", "Search param must not be empty")
+//      return
+//    }
+//
+//    var projection = arrayOf<String>(
+//      MediaStore.Audio.AudioColumns.TITLE,
+//      MediaStore.Audio.AudioColumns.ALBUM,
+//      MediaStore.Audio.AudioColumns.ARTIST,
+//      MediaStore.Audio.AudioColumns.DURATION,
+//      MediaStore.Audio.AudioColumns.GENRE,
+//      MediaStore.Audio.Media.DATA
+//    )
+//
+//    val searchBy = options.getString("searchBy")
+//
+//    val limit =  when (options.hasKey("limit")) {
+//      true -> options.getInt("limit")
+//      else -> 20
+//    }
+//
+//    val offset =  when (options.hasKey("offset")) {
+//      true -> options.getInt("offset")
+//      else -> 0
+//    }
+//
+//    val sortOrder = when  {
+//      options.hasKey("sortOrder") -> options.getString("sortOrder")
+//      else -> "ASC"
+//    }
+//
+//    val sortColumn = when {
+//      options.hasKey("sortBy") -> options.getString("sortBy")
+//      else -> "TITLE"
+//    }
+//
+//    val query = "AND ("+ MediaStore.Audio.Albums.ARTIST + " LIKE ? OR " + MediaStore.Audio.Albums.ALBUM + " LIKE ? OR " + MediaStore.Audio.Media.TITLE + " LIKE ?)"
+//
+//    val whereArgs = arrayOf("%$searchBy%","%$searchBy%","%$searchBy%")
+//
+//    // Bellow android 0
+//    val selection = MediaStore.Audio.Media.IS_MUSIC + " != 0"
+//    // Android 0 afterwards
+//    val bundleSelection = bundleOf(
+//      ContentResolver.QUERY_ARG_SQL_SELECTION bundleTo "$selection $query",
+//      ContentResolver.QUERY_ARG_SQL_SELECTION_ARGS bundleTo whereArgs,
+//      ContentResolver.QUERY_ARG_LIMIT bundleTo limit,
+//      ContentResolver.QUERY_ARG_OFFSET bundleTo offset,
+//    )
+//
+//    val resultSet = parseCursor(projection,
+//      "$selection $query LIMIT $limit OFFSET $offset", bundleSelection, whereArgs
+//    )
+//
+//    val songList: ArrayList<Any> = createSongCursor(resultSet, options).toArrayList()
+//
+//    // manual sort
+//    songList.sortWith(compareBy {
+//      when (sortColumn) {
+//        "DURATION" -> "duration"
+//        "TITLE" -> "title"
+//        "ARTIST" -> "artist"
+//        "ALBUM" -> "album"
+//        "GENRE" -> "genre"
+//        "DATE_ADDED" -> "date_added"
+//        // Add more cases for other columns if needed
+//        else -> "title"
+//      }
+//    })
+//
+//    // If the sortOrder is descending, reverse the sorted list
+//    if (sortOrder == "DESC") {
+//      songList.reverse()
+//    }
+//
+//    // Convert ArrayList to WritableArray
+//    val writableArray: WritableArray = Arguments.createArray()
+//
+//    for (item in songList) {
+//      val writableMap: WritableMap = Arguments.createMap()
+//
+//      when (item) {
+//        is Map<*, *> -> {
+//          // If the item is a Map, assume it's a HashMap<String, Any>
+//          for ((key, value) in item.entries) {
+//            when (value) {
+//              is String -> writableMap.putString(key.toString(), value)
+//              is Int -> writableMap.putInt(key.toString(), value)
+//              is Double -> writableMap.putDouble(key.toString(), value)
+//              is Boolean -> writableMap.putBoolean(key.toString(), value)
+//              // Handle other types as needed
+//            }
+//          }
+//        }
+//        // Add more cases if there are other types in your ArrayList
+//        else -> {
+//          // Handle other types or provide a default behavior
+//        }
+//      }
+//
+//      writableArray.pushMap(writableMap)
+//    }
+//
+//    promise.resolve(writableArray)
+//  }
 
   private fun parseCursor(projection: Array<String>, selection: String, bundleSelection: Bundle, searchParams: Array<String>?): Cursor? {
     val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI

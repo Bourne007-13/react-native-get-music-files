@@ -20,7 +20,11 @@ fun bundleOf(vararg pairs: BundlePair) = bundle {
 infix fun String.bundleTo(value: Boolean) = BundlePair { it[this] = value }
 infix fun String.bundleTo(value: Byte) = BundlePair { it[this] = value }
 infix fun String.bundleTo(value: Short) = BundlePair { it[this] = value }
-infix fun String.bundleTo(value: Int) = BundlePair { it[this] = value }
+infix fun String.bundleTo(value: Int?) = BundlePair {
+    if (value != null) {
+        it[this] = value
+    }
+}
 infix fun String.bundleTo(value: Long) = BundlePair { it[this] = value }
 infix fun String.bundleTo(value: Float) = BundlePair { it[this] = value }
 infix fun String.bundleTo(value: Double) = BundlePair { it[this] = value }
